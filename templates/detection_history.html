@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload Image - WasteVision AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'Inter',sans-serif;
+      background:linear-gradient(180deg,#040712 0%,#07101f 60%,#050816 100%);
+      color:#eef4ff;
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    .app{display:flex;gap:20px;padding:20px;min-height:100vh}
+    .sidebar{
+      width:272px;min-width:272px;border-radius:28px;
+      background:linear-gradient(180deg, rgba(9,15,30,0.96), rgba(5,10,22,0.98));
+      border:1px solid rgba(255,255,255,0.06);
+      box-shadow:0 24px 70px rgba(0,0,0,0.45);
+      padding:18px 12px 14px;display:flex;flex-direction:column;overflow:hidden;
+    }
+    .brand{display:flex;align-items:center;gap:12px;padding:4px 8px 18px;margin-bottom:10px}
+    .brand-icon{width:44px;height:44px;flex:0 0 44px}
+    .brand-text{font-size:31px;font-weight:800;letter-spacing:-0.05em;line-height:1}
+    .brand-text span{color:#33e05d}
+    .nav{display:flex;flex-direction:column;gap:10px;padding-top:6px}
+    .nav-item{
+      display:flex;align-items:center;gap:16px;height:70px;padding:0 18px;border-radius:18px;
+      color:rgba(245,248,255,0.95);background:transparent;border:0;cursor:pointer;text-align:left;
+      font-size:18px;transition:.2s ease
+    }
+    .nav-item i{width:22px;height:22px;stroke-width:2}
+    .nav-item:hover{background:rgba(255,255,255,0.05)}
+    .nav-item.active{
+      background:linear-gradient(90deg, rgba(35,146,64,0.8), rgba(35,146,64,0.28));
+      box-shadow:inset 0 0 0 1px rgba(128,255,164,0.08)
+    }
+    .sidebar-card{
+      margin-top:auto;margin-top:18px;border-radius:22px;min-height:250px;padding:24px 22px;
+      background:linear-gradient(180deg,#082d1b,#051b11);border:1px solid rgba(58,255,106,0.12);
+      display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden
+    }
+    .sidebar-card::before{
+      content:'';position:absolute;inset:-30px auto auto -40px;width:170px;height:170px;border-radius:50%;
+      background:radial-gradient(circle, rgba(75,255,120,0.15), transparent 65%)
+    }
+    .shield{width:56px;height:56px;margin:0 auto 16px}
+    .sidebar-card h3{text-align:center;margin:0 0 12px;font-size:24px;line-height:1.22;letter-spacing:-0.04em}
+    .sidebar-card p{margin:0;font-size:15px;line-height:1.6;text-align:center;color:rgba(224,245,230,0.76)}
+    .leaf{width:60px;height:60px;margin:14px auto 0;opacity:.95}
+
+    .main{flex:1;min-width:0;display:flex;flex-direction:column;gap:18px}
+    .topbar{
+      display:flex;justify-content:flex-end;align-items:center;gap:14px;min-height:58px;padding-right:4px
+    }
+    .icon-btn,.ghost-btn,.solid-btn{
+      height:54px;border-radius:16px;border:1px solid rgba(255,255,255,0.12);
+      background:rgba(255,255,255,0.03);color:#eef4ff;display:inline-flex;align-items:center;justify-content:center;
+      gap:10px;padding:0 22px;cursor:pointer;transition:.2s ease;box-shadow:0 10px 20px rgba(0,0,0,0.1)
+    }
+    .icon-btn{width:54px;padding:0;border-radius:50%}
+    .ghost-btn:hover,.icon-btn:hover{transform:translateY(-1px);background:rgba(255,255,255,0.06)}
+    .solid-btn.green{
+      border-color:rgba(66,255,115,0.18);
+      background:linear-gradient(180deg,#54df63,#18b83f);font-weight:700;color:#fff
+    }
+    .solid-btn.blue{
+      border-color:rgba(67,140,255,0.20);
+      background:linear-gradient(180deg,#2f7fff,#1259d7);font-weight:700;color:#fff
+    }
+
+    .page-shell{
+      border-radius:30px; border:1px solid rgba(255,255,255,0.10);
+      box-shadow:0 24px 70px rgba(0,0,0,0.45);
+      background:linear-gradient(135deg, #184f51 0%, #0f6f82 25%, #0b88a0 45%, #1373d7 74%, #1151d2 100%);
+      padding:28px;
+      position:relative;
+      overflow:hidden;
+      min-height:680px;
+    }
+    .page-shell::before{
+      content:'';
+      position:absolute;inset:0;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(255,255,255,0.10), transparent 26%),
+        radial-gradient(circle at 35% 84%, rgba(255,255,255,0.05), transparent 18%),
+        linear-gradient(130deg, rgba(255,255,255,0.05), transparent 40%);
+      pointer-events:none
+    }
+
+    .page-head{position:relative;z-index:1;text-align:center;margin-bottom:22px}
+    .page-head h1{font-size:34px;letter-spacing:-0.04em;margin-bottom:8px}
+    .page-head p{color:rgba(240,248,255,0.82)}
+
+
+
+    .panel{
+      border-radius:24px;
+      background:rgba(7,13,24,0.68);
+      border:1px solid rgba(255,255,255,0.09);
+      box-shadow:0 18px 35px rgba(0,0,0,0.18);
+      padding:18px;
+      backdrop-filter: blur(10px);
+    }
+
+    .upload-card{display:flex;flex-direction:column;gap:14px}
+    .upload-drop{
+      border:2px dashed rgba(255,255,255,0.25);
+      border-radius:20px;
+      min-height:250px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap:10px;
+      cursor:pointer;
+      text-align:center;
+      padding:18px;
+      background:rgba(255,255,255,0.04);
+    }
+    .upload-drop:hover{background:rgba(255,255,255,0.06)}
+    .upload-drop .big{font-size:18px;font-weight:700}
+    .upload-drop .small{font-size:14px;color:rgba(240,248,255,0.76)}
+    #preview{
+      width:100%;
+      max-height:280px;
+      object-fit:contain;
+      border-radius:18px;
+      background:#000;
+      display:none;
+    }
+    .actions{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{
+      border:none;border-radius:14px;padding:14px 18px;font-weight:700;cursor:pointer
+    }
+    .btn.green{background:#31d85f;color:#fff}
+    .btn.dark{background:rgba(255,255,255,0.08);color:#eef4ff;border:1px solid rgba(255,255,255,0.12)}
+
+    .result-card h2{font-size:24px;margin-bottom:12px}
+    .result-box{
+      border-radius:18px;
+      background:rgba(255,255,255,0.05);
+      padding:18px;
+      margin-top:10px;
+    }
+    .prediction{font-size:22px;font-weight:800;margin-bottom:10px}
+    .confidence{
+      margin-top:10px;
+      width:100%;
+      height:14px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.12);
+      overflow:hidden
+    }
+    .confidence-fill{
+      width:0%;
+      height:100%;
+      background:linear-gradient(90deg,#31d85f,#f8c316);
+      border-radius:999px
+    }
+    .confidence-text{margin-top:8px;font-weight:600;color:#d8fce2}
+    .note{
+      margin-top:14px;
+      font-size:13px;
+      color:rgba(255,255,255,0.7);
+      line-height:1.5;
+    }
+
+    .hidden{display:none}
+
+    @media (max-width: 1180px){
+      .app{flex-direction:column}
+      .sidebar{width:100%;min-width:0}
+      .upload-grid{grid-template-columns:1fr}
+      .page-shell{min-height:auto}
+    }
+.brand{
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:25px 0 10px;
+    margin-bottom:20px;
+}
+
+.brand-logo{
+    width:250px;
+    height:auto;
+    object-fit:contain;
+    display:block;
+}
+    body::before,
+body::after{
+    content:'';
+    position:fixed;
+    width:450px;
+    height:450px;
+    border-radius:50%;
+    filter:blur(120px);
+    z-index:-1;
+    opacity:.18;
+}
+
+body::before{
+    background:#00c2ff;
+    top:-150px;
+    left:-150px;
+    animation:blobOne 12s ease-in-out infinite alternate;
+}
+
+body::after{
+    background:#33e05d;
+    bottom:-150px;
+    right:-150px;
+    animation:blobTwo 14s ease-in-out infinite alternate;
+}
+
+@keyframes blobOne{
+    from{transform:translate(0,0);}
+    to{transform:translate(120px,80px);}
+}
+
+@keyframes blobTwo{
+    from{transform:translate(0,0);}
+    to{transform:translate(-120px,-80px);}
+}
+    body{
+    position:relative;
+}
+
+body::after{
+    content:'';
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    opacity:.08;
+    background-image:
+      linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px);
+    background-size:40px 40px;
+    animation:gridMove 20s linear infinite;
+}
+
+@keyframes gridMove{
+    from{
+        transform:translateY(0);
+    }
+    to{
+        transform:translateY(40px);
+    }
+}
+.user-name{
+    color:#33e05d;
+    font-weight:700;
+    font-size:18px;
+}
+    .logout-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    height:54px;
+    padding:0 24px;
+    border-radius:16px;
+    border:none;
+    background:linear-gradient(180deg,#54df63,#18b83f);
+    color:#fff;
+    font-weight:700;
+    text-decoration:none;
+    transition:.25s ease;
+    box-shadow:0 10px 20px rgba(0,0,0,.15);
+}
+
+.logout-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 0 22px rgba(51,224,93,.45);
+}
+.history-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.history-table thead{
+    background:rgba(255,255,255,.04);
+}
+
+.history-table th{
+    padding:18px;
+    text-align:left;
+    color:#fff;
+    font-size:15px;
+    font-weight:700;
+}
+
+.history-table td{
+    padding:18px;
+    text-align:left;
+    vertical-align:middle;
+}
+
+
+.prediction-badge{
+    padding:8px 14px;
+    border-radius:999px;
+    background:rgba(51,224,93,.12);
+    color:#8df5aa;
+}
+
+.confidence-pill{
+    padding:8px 14px;
+    border-radius:999px;
+    background:rgba(0,180,255,.12);
+    color:#8fdfff;
+}
+    .thumb{
+    width:72px;
+    height:72px;
+    border-radius:14px;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.08);
+    background:#07111f;
+}
+
+.thumb img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+    .category{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:600;
+}
+
+.category.hazard{
+    color:#ff4a4a;
+}
+
+.category.infectious{
+    color:#ffc400;
+}
+
+.category.sharps{
+    color:#ffd84a;
+}
+    .action-btn{
+    width:42px;
+    height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:auto;
+    border-radius:12px;
+}
+
+.action-btn:hover{
+    transform:translateY(-2px);
+    background:rgba(255,255,255,.08);
+    box-shadow:0 0 18px rgba(0,180,255,.2);
+}
+    .pagination{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    margin-top:30px;
+}
+
+.pagination a{
+    width:45px;
+    height:45px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:12px;
+    text-decoration:none;
+    color:white;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.08);
+    transition:.3s;
+}
+
+.pagination a:hover{
+    transform:translateY(-3px);
+    border-color:#35e36d;
+}
+
+.pagination a.active{
+    background:#16c55f;
+    color:white;
+    font-weight:700;
+    box-shadow:0 0 20px rgba(53,227,109,.35);
+}
+
+.page-btn{
+    width:42px;
+    height:42px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,.08);
+    background:transparent;
+    color:white;
+}
+
+.page-btn.active{
+    background:#19c75a;
+}
+tbody tr{
+    transition:.3s;
+}
+
+tbody tr:hover{
+    background:rgba(255,255,255,.05);
+    transform:translateY(-2px);
+}
+/* ===== PREMIUM TABLE ===== */
+
+.history-table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0 px;
+}
+
+.history-table thead tr{
+    background:rgba(255,255,255,.04);
+    backdrop-filter:blur(20px);
+}
+
+.history-table th{
+    padding:22px;
+    font-size:15px;
+    font-weight:700;
+    color:#ffffff;
+    letter-spacing:.5px;
+    text-transform:capitalize;
+}
+
+.history-table tbody tr{
+    position:relative;
+    background:rgba(255,255,255,.025);
+    backdrop-filter:blur(12px);
+    transition:.35s ease;
+    animation:slideUp .6s ease;
+}
+
+.history-table tbody tr td{
+    padding:22px;
+    border-top:1px solid rgba(255,255,255,.03);
+    border-bottom:1px solid rgba(255,255,255,.03);
+}
+
+.history-table tbody tr td:first-child{
+    border-radius:16px 0 0 16px;
+}
+
+.history-table tbody tr td:last-child{
+    border-radius:0 16px 16px 0;
+}
+.history-table td:nth-child(4){
+    color:#49ff88;
+    font-weight:700;
+}
+
+/* Hover Animation */
+.history-table tbody tr:hover{
+    transform:translateY(-4px) scale(1.01);
+    background:rgba(53,227,109,.06);
+    transition:.25s;
+    box-shadow:
+    0 0 30px rgba(53,227,109,.15),
+    0 0 60px rgba(0,180,255,.08);
+}
+/* Left Neon Border */
+.history-table tbody tr::before{
+    position:absolute;
+    left:0;
+    top:15%;
+    width:4px;
+    height:70%;
+    border-radius:20px;
+    background:#35e36d;
+    opacity:0;
+    transition:.3s;
+}
+
+.history-table tbody tr:hover::before{
+    opacity:1;
+}
+
+/* Row Entry Animation */
+@keyframes slideUp{
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* Confidence Glow */
+.confidence{
+    color:#35e36d;
+    font-weight:700;
+    text-shadow:
+        0 0 8px rgba(53,227,109,.5),
+        0 0 15px rgba(53,227,109,.3);
+}
+
+/* Category Badge */
+.category-badge{
+    padding:8px 14px;
+    border-radius:999px;
+    font-weight:600;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    transition:.3s;
+}
+
+.category-badge:hover{
+    transform:scale(1.08);
+}
+
+.hazard{
+    color:#ff4d4d;
+    background:rgba(255,77,77,.12);
+    padding:6px 12px;
+    border-radius:999px;
+    font-weight:600;
+}
+
+.sharps{
+    color:#3dff88;
+    background:rgba(61,255,136,.12);
+    padding:6px 12px;
+    border-radius:999px;
+    font-weight:600;
+}
+
+.infectious{
+    color:#ffcc33;
+    background:rgba(255,204,51,.12);
+    padding:6px 12px;
+    border-radius:999px;
+    font-weight:600;
+}
+
+/* Delete Button */
+.action-btn{
+    width:42px;
+    height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:12px;
+    background:rgba(255,255,255,.04);
+    transition:.3s;
+    margin:auto;
+}
+
+.action-btn:hover{
+    background:rgba(255,60,60,.15);
+    transform:scale(1.15) rotate(8deg);
+    box-shadow:0 0 18px rgba(255,60,60,.35);
+}
+
+/* Pagination Glow */
+.pagination a{
+    transition:.3s;
+}
+
+.pagination a:hover{
+    transform:translateY(-3px);
+    box-shadow:0 0 20px rgba(53,227,109,.35);
+}
+
+.pagination .active{
+    animation:pulsePage 2s infinite;
+}
+
+@keyframes pulsePage{
+    0%,100%{
+        box-shadow:0 0 10px rgba(53,227,109,.2);
+    }
+    50%{
+        box-shadow:0 0 25px rgba(53,227,109,.55);
+    }
+}
+.table-wrapper{
+    position:relative;
+    overflow:hidden;
+    border-radius:24px;
+}
+
+.table-wrapper::before{
+    content:'';
+    position:absolute;
+    top:0;
+    left:-100%;
+    width:100%;
+    height:2px;
+
+    background:linear-gradient(
+        90deg,
+        transparent,
+        #35e36d,
+        #00b4ff,
+        transparent
+    );
+
+    animation:scan 4s linear infinite;
+}
+
+@keyframes scan{
+    from{
+        left:-100%;
+    }
+    to{
+        left:100%;
+    }
+}
+.delete-btn{
+    transition:.25s;
+}
+
+.delete-btn:hover{
+    background:#ff3b3b;
+    color:white;
+    transform:scale(1.08);
+}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <img src="{{ url_for('static', filename='images/logo.png') }}"
+             alt="WasteVision AI"
+             class="brand-logo">
+      </div>
+
+      <nav class="nav">
+        <a class="nav-item" href="{{ url_for('index') }}"><i data-lucide="home"></i><span>Home</span></a>
+        <a class="nav-item" href="{{ url_for('live_detection') }}"><i data-lucide="video"></i><span>Live Detection</span></a>
+        <a class="nav-item" href="{{ url_for('upload_image') }}"><i data-lucide="upload"></i><span>Upload Image</span></a>
+        <a class="nav-item active" href="{{ url_for('detection_history') }}"><i data-lucide="history"></i><span>Detection History</span></a>
+        <a class="nav-item" href="{{ url_for('waste_guide') }}"><i data-lucide="book-open"></i><span>Waste Guide</span></a>
+        <a class="nav-item" href="{{ url_for('about') }}"><i data-lucide="info"></i><span>About</span></a>
+        <a class="nav-item" href="{{ url_for('contact') }}"><i data-lucide="mail"></i><span>Contact</span></a>
+      </nav>
+
+      <div class="sidebar-card">
+        <svg class="shield" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M32 6L52 13V28C52 42 43 52.3 32 56C21 52.3 12 42 12 28V13L32 6Z" stroke="#33e05d" stroke-width="3.5"/>
+          <path d="M22 33C26 24 34 20 42 19C39 29 34 39 26 46C22 42 19.5 37.8 18 33.8C17.7 33.1 17.8 32.9 18.5 32.7C19.6 32.4 20.8 32.7 22 33Z" fill="#33e05d"/>
+        </svg>
+        <div>
+          <h3>Keep Our Environment Safe</h3>
+          <p>Proper segregation of biowaste ensures a healthier tomorrow.</p>
+        </div>
+        <svg class="leaf" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M50 14C34 15 21 27 18 46C36 48 49 36 50 14Z" fill="#33e05d"/>
+          <path d="M20 44C28 37 35 32 45 26" stroke="#07101f" stroke-width="3" stroke-linecap="round"/>
+          <path d="M16 44C21 37 25 30 26 21" stroke="#33e05d" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <button class="icon-btn" id="themeBtn">
+           <i data-lucide="sun-medium"></i>
+        </button>
+          {% if session.get('username') %}
+
+          <span style="
+            color:#33e05d;
+            font-weight:700;
+            margin-right:10px;
+          ">
+              Hi, {{ session['username'] }}
+          </span>
+
+        <a href="{{ url_for('logout') }}" class="logout-btn">
+          <i data-lucide="log-out"></i>
+          Logout
+        </a>
+        {% else %}
+        <a href="{{ url_for('login_signup') }}" class="login-btn">
+          Login
+        </a>
+
+        <a href="{{ url_for('login_signup') }}" class="signup-btn">
+          Sign Up
+        </a>
+
+        {% endif %}
+      </div>
+
+      <section class="page-shell">
+        <div class="page-head">
+          <h1>Detection History</h1>
+          <p>View and manage your previous detections</p>
+        </div>
+        <div class="panel">
+          <div class="table-wrapper">
+                <table class="history-table">
+
+                  <thead>
+                  <tr>
+                    <th>File Name</th>
+                    <th>Detected Item</th>
+                    <th>Category</th>
+                    <th>Confidence</th>
+                    <th>Date & Time</th>
+                    <th>Action</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+
+                  {% for row in rows %}
+                  <tr>
+    <td>{{ row[1] }}</td> <!-- filename -->
+
+    <td>
+        {{ row[2] }}
+    </td> <!-- prediction -->
+
+    <td>
+        {% if "Syringe" in row[2] %}
+            <span class="hazard">☣ Hazardous Waste</span>
+        {% elif "Cotton" in row[2] %}
+            <span class="infectious">☣ Infectious Waste</span>
+        {% else %}
+            <span class="sharps">☣ Sharps</span>
+        {% endif %}
+    </td>
+
+    <td>{{ "%.2f"|format(row[3]) }}%</td>
+
+    <td>{{ row[5] }}</td>
+
+    <td>
+        <a href="{{ url_for('delete_history', id=row[0]) }}"
+           class="action-btn delete-btn">
+          🗑
+        </a>
+    </td>
+</tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+          </div>
+          <div class="pagination">
+
+    {% if page > 1 %}
+        <a href="{{ url_for('detection_history', page=page-1) }}">‹</a>
+    {% endif %}
+
+    {% for p in range(1, total_pages + 1) %}
+        <a href="{{ url_for('detection_history', page=p) }}"
+           class="{% if p == page %}active{% endif %}">
+           {{ p }}
+        </a>
+    {% endfor %}
+
+    {% if page < total_pages %}
+        <a href="{{ url_for('detection_history', page=page+1) }}">›</a>
+    {% endif %}
+
+</div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    document.querySelectorAll('.nav-item').forEach((item) => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+        item.classList.add('active');
+      });
+    });
+
+    const themeBtn = document.getElementById('themeBtn');
+    themeBtn.addEventListener('click', () => {
+      const dark = document.body.dataset.theme !== 'light';
+      document.body.dataset.theme = dark ? 'light' : 'dark';
+      if (dark) {
+        document.body.style.background = 'linear-gradient(180deg, #eef4ff 0%, #dfeaf9 100%)';
+      } else {
+        document.body.style.background = '';
+      }
+    });
+
+    const fileInput = document.getElementById('fileInput');
+    const preview = document.getElementById('preview');
+    const predictionEl = document.getElementById('prediction');
+    const confidenceFill = document.getElementById('confidenceFill');
+    const confidenceText = document.getElementById('confidenceText');
+
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = 'block';
+    });
+
+    function clearFile() {
+      fileInput.value = '';
+      preview.src = '';
+      preview.style.display = 'none';
+      predictionEl.textContent = 'No prediction yet';
+      confidenceFill.style.width = '0%';
+      confidenceText.textContent = 'Confidence: 0%';
+    }
+
+    async function predictImage() {
+      if (!fileInput.files.length) {
+        alert('Please choose an image first.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+
+      try {
+        const res = await fetch('/predict', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Prediction failed');
+        }
+
+        predictionEl.textContent = data.prediction;
+        confidenceFill.style.width = `${data.confidence}%`;
+        confidenceText.textContent = `Confidence: ${data.confidence}%`;
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+  </script>
+</body>
+</html>

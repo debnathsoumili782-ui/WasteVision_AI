@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Waste Guide - WasteVision AI</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Outfit',sans-serif;
+}
+
+body{
+background:#020b26;
+color:white;
+padding:40px;
+overflow-x:hidden;
+}
+
+.back-btn{
+display:inline-block;
+padding:14px 28px;
+background:linear-gradient(135deg,#16c55f,#33e05d);
+color:white;
+text-decoration:none;
+border-radius:12px;
+font-weight:600;
+transition:.3s;
+}
+
+.back-btn:hover{
+transform:translateY(-3px);
+box-shadow:0 0 25px #33e05d;
+}
+
+.hero{
+margin-top:35px;
+background:linear-gradient(135deg,#0f3460,#1f8acb);
+padding:50px;
+border-radius:30px;
+position:relative;
+overflow:hidden;
+}
+
+.hero::before{
+content:'';
+position:absolute;
+width:350px;
+height:350px;
+background:rgba(255,255,255,.05);
+border-radius:50%;
+top:-120px;
+right:-120px;
+animation:float 6s infinite ease-in-out;
+}
+
+.hero h1{
+font-size:52px;
+font-weight:800;
+margin-bottom:15px;
+}
+
+.hero p{
+font-size:18px;
+color:#d6d6d6;
+max-width:850px;
+line-height:1.8;
+}
+
+@keyframes float{
+0%{transform:translateY(0)}
+50%{transform:translateY(20px)}
+100%{transform:translateY(0)}
+}
+
+.section-title{
+text-align:center;
+font-size:38px;
+margin:60px 0 30px;
+color:#33e05d;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(350px,1fr));
+gap:25px;
+}
+
+.card{
+background:#0b2147;
+padding:30px;
+border-radius:22px;
+transition:.4s;
+border:1px solid rgba(255,255,255,.05);
+}
+
+.card:hover{
+transform:translateY(-8px);
+box-shadow:0 0 25px rgba(0,255,140,.2);
+}
+
+.icon{
+font-size:45px;
+margin-bottom:20px;
+}
+
+.green{color:#33e05d;}
+.red{color:#ff4d4d;}
+.yellow{color:#ffd633;}
+.blue{color:#4da6ff;}
+
+.card h2{
+margin-bottom:15px;
+}
+
+.card p{
+color:#d7d7d7;
+line-height:1.8;
+}
+
+.bin-section{
+margin-top:70px;
+}
+
+.bins{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:25px;
+}
+
+.bin{
+padding:30px;
+border-radius:20px;
+text-align:center;
+transition:.3s;
+}
+
+.bin:hover{
+transform:scale(1.03);
+}
+
+.yellow-bin{
+background:#ffc107;
+color:black;
+}
+
+.red-bin{
+background:#ff4444;
+}
+
+.blue-bin{
+background:#2e7df6;
+}
+
+.green-bin{
+background:#16c55f;
+}
+
+.bin i{
+font-size:50px;
+margin-bottom:15px;
+}
+
+.warning{
+margin-top:60px;
+background:#122c57;
+padding:35px;
+border-radius:20px;
+border-left:5px solid #ff4444;
+}
+
+.warning h2{
+color:#ff6666;
+margin-bottom:15px;
+}
+
+.warning p{
+line-height:1.8;
+color:#ddd;
+}
+
+.fade{
+animation:fadeIn 1s ease;
+}
+
+@keyframes fadeIn{
+   from{
+   opacity:0;
+   transform:translateY(40px);
+   }
+   to{
+   opacity:1;
+   transform:translateY(0);
+   }
+}
+
+/* Animated background */
+
+body::before{
+    content:'';
+    position:fixed;
+    width:500px;
+    height:500px;
+    background:radial-gradient(
+        rgba(51,224,93,.12),
+        transparent
+    );
+    top:-150px;
+    right:-150px;
+    z-index:-1;
+    animation:floatGlow 8s infinite alternate;
+}
+
+body::after{
+    content:'';
+    position:fixed;
+    width:400px;
+    height:400px;
+    background:radial-gradient(
+        rgba(77,166,255,.12),
+        transparent
+    );
+    bottom:-100px;
+    left:-100px;
+    z-index:-1;
+    animation:floatGlow2 10s infinite alternate;
+}
+
+@keyframes floatGlow{
+    from{
+        transform:translateY(0);
+    }
+    to{
+        transform:translateY(80px);
+    }
+}
+
+@keyframes floatGlow2{
+    from{
+        transform:translateY(0);
+    }
+    to{
+        transform:translateY(-80px);
+    }
+}
+
+/* Hero animation */
+
+.hero{
+    animation:heroFloat 5s ease-in-out infinite;
+    box-shadow:
+    0 0 35px rgba(77,166,255,.15);
+}
+
+@keyframes heroFloat{
+
+    0%{
+        transform:translateY(0);
+    }
+
+    50%{
+        transform:translateY(-10px);
+    }
+
+    100%{
+        transform:translateY(0);
+    }
+}
+
+/* Title glow */
+
+.hero h1{
+
+    background:linear-gradient(
+        90deg,
+        #ffffff,
+        #35e36d,
+        #57b8ff,
+        #ffffff
+    );
+
+    background-size:300%;
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    animation:
+    textFlow 5s linear infinite;
+}
+
+@keyframes textFlow{
+
+    0%{
+        background-position:0%;
+    }
+
+    100%{
+        background-position:300%;
+    }
+}
+
+/* Section title */
+
+.section-title{
+
+    animation:
+    pulseTitle 3s infinite;
+}
+
+@keyframes pulseTitle{
+
+    0%{
+        text-shadow:
+        0 0 10px rgba(51,224,93,.2);
+    }
+
+    50%{
+        text-shadow:
+        0 0 25px rgba(51,224,93,.7);
+    }
+
+    100%{
+        text-shadow:
+        0 0 10px rgba(51,224,93,.2);
+    }
+}
+
+/* Cards */
+
+.card{
+
+    position:relative;
+    overflow:hidden;
+}
+
+.card::before{
+
+    content:'';
+
+    position:absolute;
+
+    top:0;
+    left:-120%;
+
+    width:100%;
+    height:100%;
+
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.08),
+        transparent
+    );
+
+    transition:.8s;
+}
+
+.card:hover::before{
+    left:120%;
+}
+
+.card:hover{
+
+    transform:
+    translateY(-12px)
+    scale(1.03);
+
+    box-shadow:
+    0 0 35px rgba(51,224,93,.25);
+}
+
+/* Icons rotate */
+
+.icon{
+    transition:.5s;
+}
+
+.card:hover .icon{
+
+    transform:
+    rotate(12deg)
+    scale(1.15);
+}
+
+/* Bin cards */
+
+.bin{
+    position:relative;
+    overflow:hidden;
+}
+
+.bin:hover{
+
+    transform:
+    translateY(-8px)
+    scale(1.05);
+
+    box-shadow:
+    0 0 30px rgba(255,255,255,.25);
+}
+
+/* Warning section */
+
+.warning{
+
+    animation:
+    warningPulse 4s infinite;
+}
+
+@keyframes warningPulse{
+
+    0%{
+        box-shadow:
+        0 0 10px rgba(255,77,77,.15);
+    }
+
+    50%{
+        box-shadow:
+        0 0 35px rgba(255,77,77,.4);
+    }
+
+    100%{
+        box-shadow:
+        0 0 10px rgba(255,77,77,.15);
+    }
+}
+
+/* Back button */
+
+.back-btn:hover{
+
+    transform:
+    translateY(-4px)
+    scale(1.04);
+
+    box-shadow:
+    0 0 35px #33e05d;
+}
+</style>
+</head>
+
+<body>
+
+<a href="{{ url_for('index') }}" class="back-btn">
+<i class="fas fa-arrow-left"></i> Back To Home
+</a>
+
+<div class="hero fade">
+
+<h1>Waste Segregation Guide</h1>
+
+<p>
+Proper biomedical waste segregation reduces infection risks,
+protects healthcare workers, and ensures environmentally safe disposal.
+Follow these guidelines when handling hospital waste.
+</p>
+
+</div>
+
+<h2 class="section-title">Waste Categories</h2>
+
+<div class="grid fade">
+
+<div class="card">
+<div class="icon green">
+<i class="fas fa-syringe"></i>
+</div>
+
+<h2>Unused Syringe</h2>
+
+<p>
+Unused syringes should be stored in a sterile environment.
+Do not mix with contaminated waste.
+Keep sealed until required for medical use.
+</p>
+
+</div>
+
+<div class="card">
+<div class="icon red">
+<i class="fas fa-syringe"></i>
+</div>
+
+<h2>Waste Syringe</h2>
+
+<p>
+Used syringes are considered infectious biomedical waste.
+Immediately dispose into approved sharps containers.
+Never recap or reuse needles.
+</p>
+
+</div>
+
+<div class="card">
+<div class="icon blue">
+<i class="fas fa-pills"></i>
+</div>
+
+<h2>Unused Tablets</h2>
+
+<p>
+Unused medicines should remain in original packaging and be
+stored according to manufacturer instructions.
+Avoid contamination and moisture exposure.
+</p>
+
+</div>
+
+<div class="card">
+<div class="icon yellow">
+<i class="fas fa-tablets"></i>
+</div>
+
+<h2>Waste Tablets</h2>
+
+<p>
+Expired or damaged medicines must be disposed through
+authorized pharmaceutical waste systems and never mixed
+with regular household garbage.
+</p>
+
+</div>
+
+</div>
+
+<div class="bin-section">
+
+<h2 class="section-title">Color Coding System</h2>
+
+<div class="bins fade">
+
+<div class="bin yellow-bin">
+<i class="fas fa-trash"></i>
+<h3>Yellow Bin</h3>
+<p>Infectious Waste</p>
+</div>
+
+<div class="bin red-bin">
+<i class="fas fa-biohazard"></i>
+<h3>Red Bin</h3>
+<p>Contaminated Plastic Waste</p>
+</div>
+
+<div class="bin blue-bin">
+<i class="fas fa-recycle"></i>
+<h3>Blue Bin</h3>
+<p>Glass & Recyclable Waste</p>
+</div>
+
+<div class="bin green-bin">
+<i class="fas fa-leaf"></i>
+<h3>Green Bin</h3>
+<p>General Non-Hazardous Waste</p>
+</div>
+
+</div>
+
+</div>
+
+<div class="warning fade">
+
+<h2>
+<i class="fas fa-triangle-exclamation"></i>
+ Safety Guidelines
+</h2>
+
+<p>
+• Always wear gloves while handling biomedical waste.<br><br>
+
+• Never mix infectious and non-infectious waste.<br><br>
+
+• Dispose sharps immediately after use.<br><br>
+
+• Follow hospital and biomedical waste management regulations.<br><br>
+
+• Use designated color-coded bins for proper segregation.
+</p>
+
+</div>
+
+</body>
+</html>

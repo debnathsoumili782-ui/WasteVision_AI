@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Detection - WasteVision AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'Inter',sans-serif;
+      background:linear-gradient(180deg,#040712 0%,#07101f 60%,#050816 100%);
+      color:#eef4ff;
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    .app{display:flex;gap:20px;padding:20px;min-height:100vh}
+    .sidebar{
+      width:272px;min-width:272px;border-radius:28px;
+      background:linear-gradient(180deg, rgba(9,15,30,0.96), rgba(5,10,22,0.98));
+      border:1px solid rgba(255,255,255,0.06);
+      box-shadow:0 24px 70px rgba(0,0,0,0.45);
+      padding:18px 12px 14px;display:flex;flex-direction:column;overflow:hidden;
+    }
+    .brand{display:flex;align-items:center;gap:12px;padding:4px 8px 18px;margin-bottom:10px}
+    .brand-icon{width:44px;height:44px;flex:0 0 44px}
+    .brand-text{font-size:31px;font-weight:800;letter-spacing:-0.05em;line-height:1}
+    .brand-text span{color:#33e05d}
+    .nav{display:flex;flex-direction:column;gap:10px;padding-top:6px}
+    .nav-item{
+      display:flex;align-items:center;gap:16px;height:70px;padding:0 18px;border-radius:18px;
+      color:rgba(245,248,255,0.95);background:transparent;border:0;cursor:pointer;text-align:left;
+      font-size:18px;transition:.2s ease
+    }
+    .nav-item i{width:22px;height:22px;stroke-width:2}
+    .nav-item:hover{background:rgba(255,255,255,0.05)}
+    .nav-item.active{
+      background:linear-gradient(90deg, rgba(35,146,64,0.8), rgba(35,146,64,0.28));
+      box-shadow:inset 0 0 0 1px rgba(128,255,164,0.08)
+    }
+    .sidebar-card{
+      margin-top:auto;margin-top:18px;border-radius:22px;min-height:250px;padding:24px 22px;
+      background:linear-gradient(180deg,#082d1b,#051b11);border:1px solid rgba(58,255,106,0.12);
+      display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden
+    }
+    .sidebar-card::before{
+      content:'';position:absolute;inset:-30px auto auto -40px;width:170px;height:170px;border-radius:50%;
+      background:radial-gradient(circle, rgba(75,255,120,0.15), transparent 65%)
+    }
+    .shield{width:56px;height:56px;margin:0 auto 16px}
+    .sidebar-card h3{text-align:center;margin:0 0 12px;font-size:24px;line-height:1.22;letter-spacing:-0.04em}
+    .sidebar-card p{margin:0;font-size:15px;line-height:1.6;text-align:center;color:rgba(224,245,230,0.76)}
+    .leaf{width:60px;height:60px;margin:14px auto 0;opacity:.95}
+    .main{flex:1;min-width:0;display:flex;flex-direction:column;gap:18px}
+    .topbar{
+      display:flex;justify-content:flex-end;align-items:center;gap:14px;min-height:58px;padding-right:4px
+    }
+    .icon-btn,.ghost-btn,.solid-btn{
+      height:54px;border-radius:16px;border:1px solid rgba(255,255,255,0.12);
+      background:rgba(255,255,255,0.03);color:#eef4ff;display:inline-flex;align-items:center;justify-content:center;
+      gap:10px;padding:0 22px;cursor:pointer;transition:.2s ease;box-shadow:0 10px 20px rgba(0,0,0,0.1)
+    }
+    .icon-btn{width:54px;padding:0;border-radius:50%}
+    .ghost-btn:hover,.icon-btn:hover{transform:translateY(-1px);background:rgba(255,255,255,0.06)}
+    .solid-btn.green{
+      border-color:rgba(66,255,115,0.18);
+      background:linear-gradient(180deg,#54df63,#18b83f);font-weight:700;color:#fff
+    }
+.logout-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    height:54px;
+    padding:0 24px;
+    border-radius:16px;
+    border:none;
+    background:linear-gradient(180deg,#54df63,#18b83f);
+    color:#fff;
+    font-weight:700;
+    text-decoration:none;
+    transition:.25s ease;
+    box-shadow:0 10px 20px rgba(0,0,0,.15);
+}
+
+.logout-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 0 22px rgba(51,224,93,.45);
+}
+
+    .page-shell{
+      border-radius:30px; border:1px solid rgba(255,255,255,0.10);
+      box-shadow:0 24px 70px rgba(0,0,0,0.45);
+      background:linear-gradient(135deg, #184f51 0%, #0f6f82 25%, #0b88a0 45%, #1373d7 74%, #1151d2 100%);
+      padding:28px;
+      position:relative;
+      overflow:hidden;
+      min-height:680px;
+    }
+    .page-shell::before{
+      content:'';
+      position:absolute;inset:0;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(255,255,255,0.10), transparent 26%),
+        radial-gradient(circle at 35% 84%, rgba(255,255,255,0.05), transparent 18%),
+        linear-gradient(130deg, rgba(255,255,255,0.05), transparent 40%);
+      pointer-events:none
+    }
+
+    .page-head{position:relative;z-index:1;text-align:center;margin-bottom:22px}
+    .page-head h1{font-size:34px;letter-spacing:-0.04em;margin-bottom:8px}
+    .page-head p{color:rgba(240,248,255,0.82)}
+
+    .live-grid{
+      position:relative;z-index:1;
+      display:grid;
+      grid-template-columns: 1.4fr 0.9fr;
+      gap:18px;
+      align-items:stretch;
+    }
+
+    .panel{
+      border-radius:24px;
+      background:rgba(7,13,24,0.68);
+      border:1px solid rgba(255,255,255,0.09);
+      box-shadow:0 18px 35px rgba(0,0,0,0.18);
+      padding:18px;
+      backdrop-filter: blur(10px);
+    }
+
+    .camera-box{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+    video{
+      width:100%;
+      border-radius:20px;
+      background:#000;
+      aspect-ratio:16/10;
+      object-fit:cover;
+    }
+    .camera-actions{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{
+      border:none;border-radius:14px;padding:14px 18px;font-weight:700;cursor:pointer
+    }
+    .btn.green{background:#31d85f;color:#fff}
+    .btn.dark{background:rgba(255,255,255,0.08);color:#eef4ff;border:1px solid rgba(255,255,255,0.12)}
+    .status{font-size:15px;color:rgba(240,248,255,0.82)}
+
+    .result-card h2{font-size:24px;margin-bottom:12px}
+    .result-box{
+      border-radius:18px;
+      background:rgba(255,255,255,0.05);
+      padding:18px;
+      margin-top:10px;
+    }
+    .prediction{font-size:22px;font-weight:800;margin-bottom:10px}
+    .confidence{
+      margin-top:10px;
+      width:100%;
+      height:14px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.12);
+      overflow:hidden
+    }
+    .confidence-fill{
+      width:0%;
+      height:100%;
+      background:linear-gradient(90deg,#31d85f,#f8c316);
+      border-radius:999px
+    }
+    .confidence-text{margin-top:8px;font-weight:600;color:#d8fce2}
+
+    .note{
+      margin-top:14px;
+      font-size:13px;
+      color:rgba(255,255,255,0.7);
+      line-height:1.5;
+    }
+
+    canvas{display:none}
+
+    @media (max-width: 1180px){
+      .app{flex-direction:column}
+      .sidebar{width:100%;min-width:0}
+      .live-grid{grid-template-columns:1fr}
+      .page-shell{min-height:auto}
+    }
+    .login-btn{
+  height:54px;
+  padding:0 22px;
+  border-radius:16px;
+  border:none;
+  background:linear-gradient(180deg,#54df63,#18b83f);
+  color:#fff;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  transition:.25s ease;
+  box-shadow:0 10px 20px rgba(0,0,0,0.15);
+}
+
+.login-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 22px rgba(51,224,93,.45);
+}
+    .brand{
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:25px 0 10px;
+    margin-bottom:20px;
+}
+
+.brand-logo{
+    width:250px;
+    height:auto;
+    object-fit:contain;
+    display:block;
+}
+
+.brand-text{
+    display:none;
+}
+    body::before,
+body::after{
+    content:'';
+    position:fixed;
+    width:450px;
+    height:450px;
+    border-radius:50%;
+    filter:blur(120px);
+    z-index:-1;
+    opacity:.18;
+}
+
+body::before{
+    background:#00c2ff;
+    top:-150px;
+    left:-150px;
+    animation:blobOne 12s ease-in-out infinite alternate;
+}
+
+body::after{
+    background:#33e05d;
+    bottom:-150px;
+    right:-150px;
+    animation:blobTwo 14s ease-in-out infinite alternate;
+}
+
+@keyframes blobOne{
+    from{transform:translate(0,0);}
+    to{transform:translate(120px,80px);}
+}
+
+@keyframes blobTwo{
+    from{transform:translate(0,0);}
+    to{transform:translate(-120px,-80px);}
+}
+    body{
+    position:relative;
+}
+
+body::after{
+    content:'';
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    opacity:.08;
+    background-image:
+      linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px);
+    background-size:40px 40px;
+    animation:gridMove 20s linear infinite;
+}
+
+@keyframes gridMove{
+    from{
+        transform:translateY(0);
+    }
+    to{
+        transform:translateY(40px);
+    }
+}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <img src="{{ url_for('static', filename='images/logo.png') }}"
+             alt="WasteVision AI"
+             class="brand-logo">
+      </div>
+      <nav class="nav">
+        <a class="nav-item" href="{{ url_for('index') }}"><i data-lucide="home"></i><span>Home</span></a>
+        <a class="nav-item active" href="{{ url_for('live_detection') }}"><i data-lucide="video"></i><span>Live Detection</span></a>
+        <a class="nav-item" href="{{ url_for('upload_image') }}"><i data-lucide="upload"></i><span>Upload Image</span></a>
+        <a class="nav-item" href="{{ url_for('detection_history') }}"><i data-lucide="history"></i><span>Detection History</span></a>
+        <a class="nav-item" href="{{ url_for('waste_guide') }}"><i data-lucide="book-open"></i><span>Waste Guide</span></a>
+        <a class="nav-item" href="{{ url_for('about') }}"><i data-lucide="info"></i><span>About</span></a>
+        <a class="nav-item" href="{{ url_for('contact') }}"><i data-lucide="mail"></i><span>Contact</span></a>
+      </nav>
+
+      <div class="sidebar-card">
+        <svg class="shield" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M32 6L52 13V28C52 42 43 52.3 32 56C21 52.3 12 42 12 28V13L32 6Z" stroke="#33e05d" stroke-width="3.5"/>
+          <path d="M22 33C26 24 34 20 42 19C39 29 34 39 26 46C22 42 19.5 37.8 18 33.8C17.7 33.1 17.8 32.9 18.5 32.7C19.6 32.4 20.8 32.7 22 33Z" fill="#33e05d"/>
+        </svg>
+        <div>
+          <h3>Keep Our Environment Safe</h3>
+          <p>Proper segregation of biowaste ensures a healthier tomorrow.</p>
+        </div>
+        <svg class="leaf" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M50 14C34 15 21 27 18 46C36 48 49 36 50 14Z" fill="#33e05d"/>
+          <path d="M20 44C28 37 35 32 45 26" stroke="#07101f" stroke-width="3" stroke-linecap="round"/>
+          <path d="M16 44C21 37 25 30 26 21" stroke="#33e05d" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <button class="icon-btn" id="themeBtn" title="Theme"><i data-lucide="sun-medium"></i></button>
+        {% if session.get('username') %}
+        <span style="
+        color:#33e05d;
+        font-weight:700;
+        margin-right:10px;
+        ">
+          Hi, {{ session['username'] }}
+        </span>
+        <a href="{{ url_for('logout') }}" class="logout-btn">
+          <i data-lucide="log-out"></i>
+          Logout
+        </a>
+        {% else %}
+        <a href="{{ url_for('login_signup') }}" class="login-btn">
+          Login
+        </a>
+        <a href="{{ url_for('login_signup') }}" class="signup-btn">
+          Sign Up
+        </a>
+        {% endif %}
+      </div>
+
+      <section class="page-shell">
+        <div class="page-head">
+          <h1>Live Camera Detection</h1>
+          <p>Browser permission will appear first. Start the camera and the system will keep predicting from live frames.</p>
+        </div>
+
+        <div class="live-grid">
+          <div class="panel camera-box">
+            <video id="video" autoplay playsinline muted></video>
+            <div class="camera-actions">
+              <button class="btn green" onclick="startCamera()">Start Camera</button>
+              <button class="btn dark" onclick="stopCamera()">Stop Camera</button>
+            </div>
+            <div class="status" id="status">Camera is off. Click Start Camera to allow permission.</div>
+          </div>
+
+          <div class="panel result-card">
+            <h2>Live Result</h2>
+            <div class="result-box">
+              <div class="prediction" id="prediction">No prediction yet</div>
+              <div class="confidence">
+                <div class="confidence-fill" id="confidenceFill"></div>
+              </div>
+              <div class="confidence-text" id="confidenceText">Confidence: 0%</div>
+            </div>
+            <div class="note">
+              This shows model confidence for the current frame.
+              Browser permission is required because the camera is opened inside the browser, not by Flask/OpenCV.
+            </div>
+          </div>
+        </div>
+
+        <canvas id="canvas"></canvas>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    document.querySelectorAll('.nav-item').forEach((item) => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+        item.classList.add('active');
+      });
+    });
+
+    const themeBtn = document.getElementById('themeBtn');
+    themeBtn.addEventListener('click', () => {
+      const dark = document.body.dataset.theme !== 'light';
+      document.body.dataset.theme = dark ? 'light' : 'dark';
+      if (dark) {
+        document.body.style.background = 'linear-gradient(180deg, #eef4ff 0%, #dfeaf9 100%)';
+      } else {
+        document.body.style.background = '';
+      }
+    });
+
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const statusEl = document.getElementById('status');
+    const predictionEl = document.getElementById('prediction');
+    const confidenceFill = document.getElementById('confidenceFill');
+    const confidenceText = document.getElementById('confidenceText');
+
+    let stream = null;
+    let timer = null;
+
+    async function startCamera() {
+      try {
+        if (stream) return;
+
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' },
+          audio: false
+        });
+
+        video.srcObject = stream;
+        statusEl.textContent = 'Camera permission granted. Predicting live frames...';
+
+        video.onloadedmetadata = () => {
+          video.play();
+          if (!timer) {
+            timer = setInterval(captureAndPredict, 1500);
+          }
+        };
+      } catch (err) {
+        statusEl.textContent = 'Camera permission denied or not available.';
+        console.error(err);
+      }
+    }
+
+    function stopCamera() {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+      }
+      video.srcObject = null;
+      statusEl.textContent = 'Camera stopped.';
+    }
+
+    async function captureAndPredict() {
+      if (!stream || video.videoWidth === 0) return;
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const imageData = canvas.toDataURL('image/jpeg', 0.9);
+
+      try {
+        const res = await fetch('/predict-frame', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: imageData })
+        });
+
+        const data = await res.json();
+
+        if (data.prediction) {
+          predictionEl.textContent = data.prediction;
+          confidenceFill.style.width = `${data.confidence}%`;
+          confidenceText.textContent = `Confidence: ${data.confidence}%`;
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+</html>

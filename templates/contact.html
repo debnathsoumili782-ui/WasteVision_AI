@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Contact Us - WasteVision AI</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#020b26;
+    color:white;
+    font-family:'Plus Jakarta Sans',sans-serif;
+    overflow-x:hidden;
+}
+
+.container{
+    width:90%;
+    margin:auto;
+    padding:40px 0 80px;
+}
+
+.back-btn{
+    display:inline-block;
+    background:linear-gradient(135deg,#16c55f,#35e36d);
+    color:white;
+    text-decoration:none;
+    padding:14px 28px;
+    border-radius:14px;
+    font-weight:600;
+    margin-bottom:50px;
+    transition:.3s;
+}
+
+.back-btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 0 20px rgba(53,227,109,.5);
+}
+
+.main-title{
+    text-align:center;
+    font-size:clamp(36px,5vw,65px);
+    font-family:'Manrope',sans-serif;
+    font-weight:800;
+    letter-spacing:-2px;
+    text-transform:uppercase;
+
+    background:linear-gradient(
+        90deg,
+        #35e36d,
+        #5effff,
+        #35e36d
+    );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    margin-bottom:60px;
+
+    animation:glowText 3s infinite alternate;
+}
+
+.team-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:25px;
+}
+
+.card{
+    background:#0d2754;
+    border-radius:25px;
+    padding:30px;
+    transition:.4s;
+    box-shadow:0 0 20px rgba(0,255,120,.08);
+
+    animation:fadeUp .8s ease;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    min-height:240px;
+}
+
+.card:hover{
+    transform:
+        translateY(-12px)
+        scale(1.03);
+
+    box-shadow:
+        0 0 40px rgba(53,227,109,.45);
+}
+
+.card h2{
+    color:#35e36d;
+    font-size:30px;
+    font-family:'Manrope',sans-serif;
+    font-weight:700;
+    letter-spacing:1px;
+    margin-bottom:15px;
+}
+
+.role{
+    color:#57b8ff;
+    font-weight:bold;
+    margin-bottom:18px;
+}
+
+.info{
+    margin:10px 0;
+    color:#e4e4e4;
+    font-size:17px;
+}
+
+.section-title{
+    text-align:center;
+    font-size:60px;
+    font-family:'Manrope',sans-serif;
+    font-weight:800;
+    letter-spacing:-1px;
+
+    background:linear-gradient(
+        90deg,
+        #35e36d,
+        #57b8ff
+    );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    margin:90px 0 50px;
+
+    animation:floatTitle 4s ease-in-out infinite;
+}
+
+.mentor-card{
+    max-width:950px;
+    margin:auto;
+    background:#102a56;
+    padding:45px;
+    border-radius:30px;
+    text-align:center;
+    box-shadow:0 0 30px rgba(53,227,109,.15);
+    border:1px solid rgba(255,255,255,.08);
+    backdrop-filter:blur(12px);
+}
+
+.mentor-card h2{
+    font-size:52px;
+    font-family:'Manrope',sans-serif;
+    font-weight:800;
+    background:linear-gradient(
+        90deg,
+        #35e36d,
+        #57b8ff,
+        #35e36d
+    );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    margin-bottom:25px;
+
+    animation:glowText 2.5s infinite alternate;
+}
+.mentor-card{
+    transition:.4s;
+}
+
+.mentor-card:hover{
+    transform:scale(1.02);
+
+    box-shadow:
+        0 0 45px rgba(53,227,109,.35);
+}
+.mentor-card p{
+    color:#d8d8d8;
+    line-height:1.8;
+    font-size:18px;
+}
+
+.feedback-section{
+    max-width:1000px;
+    margin:80px auto;
+    background:#102a56;
+    padding:50px;
+    border-radius:30px;
+    box-shadow:0 0 30px rgba(53,227,109,.15);
+}
+
+.feedback-section h2{
+    text-align:center;
+    font-family:'Orbitron',sans-serif;
+    letter-spacing:2px;
+    color:#35e36d;
+    font-size:42px;
+    margin-bottom:10px;
+}
+
+.feedback-section p{
+    text-align:center;
+    color:#d8d8d8;
+    margin-bottom:30px;
+}
+
+.feedback-section form{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.feedback-section input,
+.feedback-section select,
+.feedback-section textarea{
+    padding:16px;
+    border:none;
+    border-radius:14px;
+    background:#0b2147;
+    color:white;
+    font-size:16px;
+}
+
+.feedback-section textarea{
+    min-height:150px;
+    resize:none;
+}
+
+.feedback-btn{
+    width:260px;
+    margin:auto;
+    padding:15px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(135deg,#16c55f,#35e36d);
+    color:white;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.feedback-btn:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 25px rgba(53,227,109,.5);
+}
+
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(40px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+@keyframes glowText{
+
+    from{
+        text-shadow:
+        0 0 15px rgba(53,227,109,.3);
+    }
+
+    to{
+        text-shadow:
+        0 0 40px rgba(87,184,255,.8);
+    }
+
+}
+
+@keyframes floatTitle{
+
+    0%{
+        transform:translateY(0);
+    }
+
+    50%{
+        transform:translateY(-10px);
+    }
+
+    100%{
+        transform:translateY(0);
+    }
+
+}
+.feedback-section input:focus,
+.feedback-section textarea:focus,
+.feedback-section select:focus{
+
+    outline:none;
+
+    box-shadow:
+    0 0 0 2px #35e36d,
+    0 0 20px rgba(53,227,109,.35);
+
+}
+    .container{
+    animation:fadeIn 1s ease;
+}
+
+@keyframes fadeIn{
+    from{
+        opacity:0;
+    }
+
+    to{
+        opacity:1;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<a href="{{ url_for('index') }}" class="back-btn">
+⬅ Back To Home
+</a>
+
+<h1 class="main-title">Contact Our Project Team</h1>
+
+<div class="team-grid">
+
+    <div class="card">
+        <h2>Soumili Debnath</h2>
+        <div class="role">Project Lead</div>
+        <div class="info">📧 debnathsoumili782@gmail.com</div>
+        <div class="info">📱 +91 7547934754</div>
+    </div>
+
+    <div class="card">
+        <h2>Sayani Chatterjee</h2>
+        <div class="role">AI & Model Development</div>
+        <div class="info">📧 chatterjeesayani284@gmail.com</div>
+        <div class="info">📱 +91 7047444166</div>
+    </div>
+
+    <div class="card">
+        <h2>Subham Biswas</h2>
+        <div class="role">Frontend Development</div>
+        <div class="info">📧 bsubham448@gmail.com</div>
+        <div class="info">📱 +91 9883050146</div>
+    </div>
+
+    <div class="card">
+        <h2>Rishita Chakraborty</h2>
+        <div class="role">Backend Development</div>
+        <div class="info">📧 chakrabortyrishita001@gmail.com</div>
+        <div class="info">📱 +91 7439492386</div>
+    </div>
+
+    <div class="card">
+        <h2>Saswata Sur</h2>
+        <div class="role">Documentation & Testing</div>
+        <div class="info">📧 saswatasur2021@gmail.com</div>
+        <div class="info">📱 +91 8768563747</div>
+    </div>
+
+</div>
+
+<h1 class="section-title">Project Mentor</h1>
+
+<div class="mentor-card">
+
+    <h2>Dr. Tathagata Roy Chowdhury</h2>
+
+    <p>
+        Assistant Professor,
+        Department of Computer Science & Engineering
+    </p>
+    <p>
+        Techno Institute of Engineering & Management
+    </p>
+    <p>
+        Mentor and academic guide of the WasteVision AI project.
+        Provided continuous support, technical guidance and
+        supervision throughout the development of the AI-powered
+        biomedical waste classification system.
+    </p>
+
+    <p style="margin-top:20px;color:#57b8ff;font-weight:600;">
+        📧 tathagata.r@tecb.edu.in
+    </p>
+
+</div>
+
+<div class="feedback-section">
+
+    <h2>Share Your Feedback</h2>
+
+    <p>
+        Help us improve WasteVision AI by sharing your experience,
+        suggestions and valuable feedback.
+    </p>
+
+    <form action="/submit-feedback" method="POST">
+
+        <input
+            type="text"
+            name="name"
+            placeholder="Your Name"
+            required>
+
+        <input
+            type="email"
+            name="email"
+            placeholder="Your Email"
+            required>
+
+        <select name="rating">
+            <option>⭐⭐⭐⭐⭐ Excellent</option>
+            <option>⭐⭐⭐⭐ Very Good</option>
+            <option>⭐⭐⭐ Good</option>
+            <option>⭐⭐ Fair</option>
+            <option>⭐ Poor</option>
+        </select>
+
+        <textarea
+            name="feedback"
+            placeholder="Write your feedback here..."
+            required></textarea>
+
+        <button
+            type="submit"
+            class="feedback-btn">
+            Submit Feedback
+        </button>
+
+    </form>
+
+</div>
+
+</div>
+
+</body>
+</html>
+```

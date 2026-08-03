@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WasteVision AI - Biowaste Detection</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --bg: #050816;
+      --panel: rgba(8, 13, 28, 0.96);
+      --panel-2: rgba(10, 18, 36, 0.92);
+      --stroke: rgba(255,255,255,0.08);
+      --stroke-2: rgba(255,255,255,0.12);
+      --text: #eef4ff;
+      --muted: rgba(232, 240, 255, 0.72);
+      --green: #33e05d;
+      --green-dark: #16b63f;
+      --blue: #1d74ff;
+      --yellow: #f8c316;
+      --shadow: 0 24px 70px rgba(0,0,0,0.45);
+      --sidebar-w: 260px;
+      --radius-xl: 30px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 8%, rgba(25, 133, 255, 0.14), transparent 22%),
+        radial-gradient(circle at 83% 16%, rgba(51, 224, 93, 0.13), transparent 20%),
+        linear-gradient(180deg, #040712 0%, #07101f 60%, #050816 100%);
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+
+    .app {
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: var(--sidebar-w);
+      min-width: var(--sidebar-w);
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(9, 15, 30, 0.96), rgba(5, 10, 22, 0.98));
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: var(--shadow);
+      padding: 18px 12px 14px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 4px 8px 18px;
+      margin-bottom: 10px;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 44px;
+    }
+
+    .brand-text {
+      font-size: 31px;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      line-height: 1;
+    }
+
+    .brand-text span { color: var(--green); }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      height: 70px;
+      padding: 0 18px;
+      border-radius: 18px;
+      color: rgba(245, 248, 255, 0.95);
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      text-align: left;
+      font-size: 18px;
+      transition: 0.2s ease;
+    }
+
+    .nav-item i { width: 22px; height: 22px; stroke-width: 2; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); }
+    .nav-item.active {
+      background: linear-gradient(90deg, rgba(35, 146, 64, 0.8), rgba(35, 146, 64, 0.28));
+      box-shadow: inset 0 0 0 1px rgba(128, 255, 164, 0.08);
+    }
+
+    .sidebar-card {
+      margin-top: 18px;
+      border-radius: 22px;
+      min-height: 250px;
+      padding: 24px 22px;
+      background: linear-gradient(180deg, rgba(8, 45, 27, 0.95), rgba(5, 27, 17, 0.98));
+      border: 1px solid rgba(58, 255, 106, 0.12);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      margin-top: auto;
+    }
+
+    .sidebar-card::before {
+      content: '';
+      position: absolute;
+      inset: -30px auto auto -40px;
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(75,255,120,0.15), transparent 65%);
+    }
+
+    .sidebar-card .shield {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 16px;
+    }
+
+    .sidebar-card h3 {
+      text-align: center;
+      margin: 0 0 12px;
+      font-size: 24px;
+      line-height: 1.22;
+      letter-spacing: -0.04em;
+    }
+
+    .sidebar-card p {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.6;
+      text-align: center;
+      color: rgba(224, 245, 230, 0.76);
+    }
+
+    .leaf {
+      width: 60px;
+      height: 60px;
+      margin: 14px auto 0;
+      opacity: 0.95;
+    }
+
+    .main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .login-btn,
+.signup-btn,
+.back-btn{
+    height:54px;
+    padding:0 24px;
+    border-radius:16px;
+    text-decoration:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    transition:.3s;
+}
+
+.login-btn{
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.12);
+    color:#fff;
+}
+
+.login-btn:hover{
+    background:rgba(255,255,255,.08);
+    transform:translateY(-2px);
+}
+
+.signup-btn{
+    background:linear-gradient(180deg,#54df63,#18b83f);
+    color:white;
+    border:none;
+    box-shadow:0 10px 20px rgba(24,184,63,.35);
+}
+
+.signup-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 15px 25px rgba(24,184,63,.45);
+}
+
+.back-btn{
+    background:linear-gradient(180deg,#2f7fff,#1259d7);
+    color:white;
+    border:none;
+    box-shadow:0 10px 20px rgba(18,89,215,.35);
+}
+
+.back-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 15px 25px rgba(18,89,215,.45);
+}
+    .topbar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 14px;
+      min-height: 58px;
+      padding-right: 4px;
+    }
+
+    .icon-btn, .ghost-btn, .solid-btn {
+      height: 54px;
+      border-radius: 16px;
+      border: 1px solid var(--stroke-2);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 22px;
+      cursor: pointer;
+      transition: 0.2s ease;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    .icon-btn {
+      width: 54px;
+      padding: 0;
+      border-radius: 50%;
+    }
+
+    .ghost-btn:hover, .icon-btn:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .solid-btn.green {
+      border-color: rgba(66, 255, 115, 0.18);
+      background: linear-gradient(180deg, #54df63, #18b83f);
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .solid-btn.blue {
+      border-color: rgba(67, 140, 255, 0.20);
+      background: linear-gradient(180deg, #2f7fff, #1259d7);
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .hero {
+      min-height:560px;
+      border-radius: 30px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      position: relative;
+      background: linear-gradient(135deg, #184f51 0%, #0f6f82 25%, #0b88a0 45%, #1373d7 74%, #1151d2 100%);
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(255,255,255,0.10), transparent 26%),
+        radial-gradient(circle at 35% 84%, rgba(255,255,255,0.05), transparent 18%),
+        linear-gradient(130deg, rgba(255,255,255,0.05), transparent 40%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 12% 20%, rgba(79,255,221,0.18) 0 2px, transparent 3px) 0 0 / 20px 20px,
+        radial-gradient(circle at 30% 32%, rgba(79,255,221,0.10) 0 2px, transparent 3px) 0 0 / 24px 24px,
+        linear-gradient(120deg, rgba(255,255,255,0.08), transparent 24%) left top / 42% 100% no-repeat,
+        linear-gradient(90deg, transparent 0 55%, rgba(255,255,255,0.05) 56% 100%);
+      opacity: 0.75;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 2;
+      padding: 46px 40px 34px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .hero-copy h1 {
+        margin: 0 0 18px;
+        font-size: clamp(78px, 7vw, 110px);
+        line-height: 0.95;
+        letter-spacing: -0.08em;
+        font-weight: 900;
+
+        text-shadow:
+            0 0 25px rgba(255,255,255,.12);
+    }
+.detect-card{
+    transition:.35s;
+}
+
+.detect-card:hover{
+    transform:translateY(-8px);
+    box-shadow:
+        0 0 25px rgba(51,224,93,.18);
+}
+.real-bins img{
+    animation:heroFloat 5s ease-in-out infinite;
+}
+
+@keyframes heroFloat{
+    0%,100%{
+        transform:translateY(0);
+    }
+    50%{
+        transform:translateY(-12px);
+    }
+}
+    .hero-copy .y { color: var(--yellow); }
+    .hero-copy .g { color: #42f37b; }
+
+    .hero-copy p{
+        margin: 0 0 34px;
+        max-width: 620px;
+
+        color: rgba(255,255,255,.88);
+
+        font-size: clamp(20px,1.6vw,30px);
+
+        line-height: 1.35;
+
+        font-weight: 500;
+
+        letter-spacing: -0.02em;
+        text-shadow: 0 0 12px rgba(255,255,255,.08);
+    }
+
+    .cta-row { display: flex; gap: 16px; flex-wrap: wrap; }
+
+    .hero-art {
+      position: relative;
+      z-index: 2;
+      padding: 0;
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+    }
+
+    .hero-art-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      background: transparent;
+      border-radius: 0 30px 30px 0;
+    }
+
+    .float-item {
+      position: absolute;
+      z-index: 4;
+      object-fit: contain;
+      filter: drop-shadow(0 14px 12px rgba(0,0,0,0.24));
+      pointer-events: none;
+    }
+
+    .pills-item { top: 76px; left: 88px; width: 110px; transform: rotate(-22deg); }
+    .bottle-item { top: 34px; left: 252px; width: 42px; }
+    .cotton-item { top: 68px; right: 222px; width: 84px; }
+    .syringe-item { top: 150px; right: 194px; width: 82px; transform: rotate(-16deg); }
+    .tools-item { top: 54px; right: 28px; width: 220px; }
+
+    .hero-plus {
+      position: absolute;
+      color: rgba(56, 207, 255, 0.55);
+      font-size: 72px;
+      line-height: 1;
+      font-weight: 300;
+      z-index: 3;
+      user-select: none;
+      pointer-events: none;
+      text-shadow: 0 0 20px rgba(56,207,255,0.18);
+    }
+    .p1 { left: 64px; top: 92px; }
+    .p2 { left: 310px; top: 120px; font-size: 34px; opacity: 0.5; }
+    .p3 { left: 585px; top: 330px; font-size: 30px; opacity: 0.42; }
+    .p4 { right: 46px; top: 56px; }
+    .p5 { right: 164px; top: 214px; font-size: 42px; opacity: 0.42; }
+
+    .hero-wave,
+    .hero-wave2,
+    .hero-wave3 {
+      position: absolute;
+      border-radius: 50%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .hero-wave {
+      left: -120px;
+      top: 106px;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle at center, rgba(255,255,255,0.06), rgba(255,255,255,0.02) 45%, transparent 70%);
+      opacity: 0.35;
+    }
+
+    .hero-wave2 {
+      right: 54px;
+      top: 76px;
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle at center, rgba(255,255,255,0.06), transparent 72%);
+      opacity: 0.45;
+    }
+
+    .hero-wave3 {
+      left: 20px;
+      bottom: 0;
+      width: 520px;
+      height: 180px;
+      border-bottom: 2px solid rgba(255,255,255,0.20);
+      border-radius: 0 0 240px 240px;
+      opacity: 0.45;
+      transform: translateY(24px);
+    }
+
+    .hero-hex {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      opacity: 0.34;
+      pointer-events: none;
+      background:
+        linear-gradient(120deg, rgba(255,255,255,0.12), transparent 18%) left top / 42% 100% no-repeat,
+        radial-gradient(circle at 25% 20%, rgba(76,255,226,0.16) 0 1px, transparent 2px) 0 0 / 18px 18px,
+        radial-gradient(circle at 8px 8px, rgba(255,255,255,0.10) 0 1px, transparent 2px) 0 0 / 28px 28px;
+      mask-image: linear-gradient(90deg, black 0%, black 45%, transparent 100%);
+    }
+
+    .real-bins{
+        position:absolute;
+        right:0;
+        bottom:0;
+
+        width:100%;
+        height:100%;
+
+        display:flex;
+        justify-content:flex-end;
+        align-items:flex-end;
+    }
+
+    .real-bins img{
+        width:100%;
+        height:100%;
+
+        object-fit:contain;
+        max-width:none;
+        filter:
+        drop-shadow(0 25px 35px rgba(0,0,0,.45));
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin: 4px 0 0;
+      color: rgba(248, 251, 255, 0.96);
+      font-size: 22px;
+      font-weight: 500;
+    }
+
+    .section-title::before,
+    .section-title::after {
+      content: '';
+      width: 112px;
+      height: 3px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, #39df62, transparent);
+      opacity: 0.85;
+    }
+
+    .option-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .option-card {
+      min-height: 240px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(10, 35, 28, 0.97), rgba(5, 18, 16, 0.97));
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: var(--shadow);
+      padding: 26px 28px;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .option-card.upload {
+      background: linear-gradient(180deg, rgba(8, 32, 70, 0.97), rgba(5, 16, 42, 0.97));
+    }
+
+    .content .badge {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      box-shadow: 0 18px 34px rgba(0,0,0,0.18);
+    }
+
+    .option-card:not(.upload) .badge {
+      background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.18), transparent 55%), #19b843;
+    }
+
+    .option-card.upload .badge {
+      background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.18), transparent 55%), #1e79ff;
+    }
+
+    .content h2 {
+      margin: 0 0 10px;
+      font-size: 30px;
+      letter-spacing: -0.04em;
+      line-height: 1.08;
+    }
+
+    .content p {
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.55;
+      max-width: 420px;
+    }
+
+    .art-wrap {
+      min-height: 170px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .ring {
+      width: 156px;
+      height: 156px;
+      border-radius: 50%;
+      border: 2px dashed rgba(67, 255, 117, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .upload .ring { border-color: rgba(82, 154, 255, 0.55); }
+
+    .camera-mock{
+    width:220px;
+    height:220px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+    margin:auto;
+}
+
+.camera-mock::before{
+    content:'';
+    position:absolute;
+    width:190px;
+    height:190px;
+    border:2px dashed rgba(51,224,93,.6);
+    border-radius:50%;
+    animation:rotateCircle 12s linear infinite;
+}
+
+.camera-mock img{
+    width:190px;
+    height:auto;
+    z-index:2;
+    animation:floatCamera 4s ease-in-out infinite;
+    filter:drop-shadow(0 0 20px rgba(0,0,0,.45));
+}
+
+@keyframes floatCamera{
+    0%,100%{
+        transform:translateY(0);
+    }
+    50%{
+        transform:translateY(-12px);
+    }
+}
+
+@keyframes rotateCircle{
+    from{
+        transform:rotate(0deg);
+    }
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+
+
+    .file-mock{
+    width:220px;
+    height:220px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+    margin:auto;
+}
+
+.file-mock::before{
+    content:'';
+    position:absolute;
+    width:190px;
+    height:190px;
+    border:2px dashed rgba(52,140,255,.5);
+    border-radius:50%;
+    animation:rotateUpload 14s linear infinite;
+}
+
+.file-mock img{
+    width:200px;
+    z-index:2;
+    animation:floatUpload 4s ease-in-out infinite;
+    filter:drop-shadow(0 0 18px rgba(0,0,0,.4));
+}
+
+.file-mock::after{
+    content:'';
+    position:absolute;
+    width:100px;
+    height:18px;
+    bottom:-15px;
+    background:rgba(0,0,0,.45);
+    border-radius:50%;
+    filter:blur(10px);
+}
+
+@keyframes floatUpload{
+    0%,100%{
+        transform:translateY(0);
+    }
+    50%{
+        transform:translateY(-10px);
+    }
+}
+
+@keyframes rotateUpload{
+    from{
+        transform:rotate(0deg);
+    }
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+
+    .what-we-detect { margin-top: 4px; }
+
+    .cards-row {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .detect-card {
+      height: 210px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(25,31,44,0.98), rgba(16,21,31,0.98));
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: var(--shadow);
+      padding: 16px 12px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .detect-img {
+      width: 100%;
+      height: 130px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .detect-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 12px rgba(0,0,0,0.18));
+    }
+
+    .detect-card .label {
+      color: rgba(245,249,255,0.92);
+      font-size: 15px;
+      text-align: center;
+      line-height: 1.25;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .more-dots {
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .more-dots span {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #f0f4ff;
+      display: block;
+    }
+
+    .hidden-file-input { display: none; }
+
+    @media (max-width: 1520px) {
+      .hero-copy p { font-size: 22px; }
+      .option-card .content h2 { font-size: 26px; }
+      .cards-row { grid-template-columns: repeat(3, 1fr); }
+      .detect-card { height: 220px; }
+    }
+
+    @media (max-width: 1180px) {
+      .app { flex-direction: column; }
+      .sidebar { width: 100%; min-width: 0; }
+      .hero, .option-grid { grid-template-columns: 1fr; }
+      .hero-art { min-height: 320px; }
+      .hero-art-inner { border-radius: 0 0 30px 30px; }
+      .cards-row { grid-template-columns: repeat(2, 1fr); }
+      .section-title::before, .section-title::after { width: 70px; }
+    }
+
+    @media (max-width: 720px) {
+      .app { padding: 12px; gap: 12px; }
+      .sidebar { border-radius: 22px; }
+      .brand-text { font-size: 28px; }
+      .nav-item { height: 60px; font-size: 16px; }
+      .hero-copy { padding: 24px 18px; }
+      .hero-copy h1 { font-size: 44px; }
+      .hero-copy p { font-size: 17px; }
+      .option-card { grid-template-columns: 1fr; }
+      .cards-row { grid-template-columns: 1fr; }
+      .section-title { font-size: 18px; gap: 12px; }
+      .section-title::before, .section-title::after { width: 48px; }
+      .pills-item { left: 22px; width: 74px; }
+      .bottle-item { left: 146px; width: 32px; }
+      .cotton-item { right: 90px; width: 58px; }
+      .syringe-item { right: 76px; width: 56px; }
+      .tools-item { right: 10px; width: 126px; }
+    }
+    .brand-text{
+    font-size:24px;
+    font-weight:800;
+    line-weight:1.05;
+    color:white;
+}
+
+.brand-text span{
+    color:#33e05d;
+}
+
+.brand{
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:25px 0 10px;
+    margin-bottom:20px;
+}
+
+.brand-logo{
+    width:250px;
+    height:auto;
+    object-fit:contain;
+    display:block;
+}
+    .logout-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    height:54px;
+    padding:0 24px;
+    border-radius:16px;
+    border:none;
+    background:linear-gradient(180deg,#54df63,#18b83f);
+    color:#fff;
+    font-weight:700;
+    text-decoration:none;
+    transition:.25s ease;
+    box-shadow:0 10px 20px rgba(0,0,0,.15);
+}
+
+.logout-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 0 22px rgba(51,224,93,.45);
+}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <img src="{{ url_for('static', filename='images/logo.png') }}"
+             alt="WasteVision AI"
+             class="brand-logo">
+      </div>
+
+      <nav class="nav">
+        <a class="nav-item active" href="{{ url_for('index') }}"><i data-lucide="home"></i><span>Home</span></a>
+        <a class="nav-item" href="{{ url_for('live_detection') }}"><i data-lucide="video"></i><span>Live Detection</span></a>
+        <a class="nav-item" href="{{ url_for('upload_image') }}"><i data-lucide="upload"></i><span>Upload Image</span></a>
+        <a class="nav-item" href="{{ url_for('detection_history') }}"><i data-lucide="history"></i><span>Detection History</span></a>
+        <a class="nav-item" href="{{ url_for('waste_guide') }}"><i data-lucide="book-open"></i><span>Waste Guide</span></a>
+        <a class="nav-item" href="{{ url_for('about') }}"><i data-lucide="info"></i><span>About</span></a>
+        <a class="nav-item" href="{{ url_for('contact') }}"><i data-lucide="mail"></i><span>Contact</span></a>
+      </nav>
+
+      <div class="sidebar-card">
+        <svg class="shield" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M32 6L52 13V28C52 42 43 52.3 32 56C21 52.3 12 42 12 28V13L32 6Z" stroke="#33e05d" stroke-width="3.5"/>
+          <path d="M22 33C26 24 34 20 42 19C39 29 34 39 26 46C22 42 19.5 37.8 18 33.8C17.7 33.1 17.8 32.9 18.5 32.7C19.6 32.4 20.8 32.7 22 33Z" fill="#33e05d"/>
+        </svg>
+        <div>
+          <h3>Keep Our Environment Safe</h3>
+          <p>Proper segregation of biowaste ensures a healthier tomorrow.</p>
+        </div>
+        <svg class="leaf" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M50 14C34 15 21 27 18 46C36 48 49 36 50 14Z" fill="#33e05d"/>
+          <path d="M20 44C28 37 35 32 45 26" stroke="#07101f" stroke-width="3" stroke-linecap="round"/>
+          <path d="M16 44C21 37 25 30 26 21" stroke="#33e05d" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <button class="icon-btn" id="themeBtn">
+           <i data-lucide="sun-medium"></i>
+        </button>
+          {% if session.get('username') %}
+
+          <span style="
+            color:#33e05d;
+            font-weight:700;
+            margin-right:10px;
+          ">
+              Hi, {{ session['username'] }}
+          </span>
+
+        <a href="{{ url_for('logout') }}" class="logout-btn">
+          <i data-lucide="log-out"></i>
+          Logout
+        </a>
+        {% else %}
+        <a href="{{ url_for('login_signup') }}" class="login-btn">
+          Login
+        </a>
+
+        <a href="{{ url_for('login_signup') }}" class="signup-btn">
+          Sign Up
+        </a>
+
+        {% endif %}
+      </div>
+
+      <section class="hero">
+        <div class="hero-copy">
+          <h1>
+            Detect. <span class="y">Segregate.</span><br>
+            <span class="g">Protect.</span>
+          </h1>
+          <p>AI-Powered Biowaste Detection for Hospitals &amp; Healthcare Facilities</p>
+          <div class="cta-row">
+            <a class="solid-btn green" href="{{ url_for('live_detection') }}"><i data-lucide="camera"></i>Live Detection</a>
+            <a class="ghost-btn" href="{{ url_for('upload_image') }}"><i data-lucide="upload"></i>Upload Image</a>
+          </div>
+        </div>
+
+        <div class="hero-art">
+          <div class="hero-art-inner">
+            <div class="hero-hex"></div>
+            <div class="hero-wave"></div>
+            <div class="hero-wave2"></div>
+            <div class="hero-wave3"></div>
+            <span class="hero-plus p1">+</span>
+            <span class="hero-plus p2">+</span>
+            <span class="hero-plus p3">+</span>
+            <span class="hero-plus p4">+</span>
+            <span class="hero-plus p5">+</span>
+
+            <div class="real-bins">
+              <img src="{{ url_for('static', filename='images/bins.png') }}" alt="Waste Bins">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="section-title">Choose an Option to Get Started</div>
+
+      <section class="option-grid">
+        <article class="option-card">
+          <div class="content">
+            <div class="badge"><i data-lucide="video"></i></div>
+            <h2>Live Camera Detection</h2>
+            <p>Use your device camera to detect and classify biowaste in real-time.</p>
+            <a class="solid-btn green" href="{{ url_for('live_detection') }}">Start Live Detection <i data-lucide="arrow-right"></i></a>
+          </div>
+          <div class="art-wrap">
+            <div class="ring">
+              <div class="camera-mock">
+                <img src="{{ url_for('static', filename='images/webcam-preview.png') }}"
+                     alt="Live Detection Preview">
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="option-card upload">
+          <div class="content">
+            <div class="badge"><i data-lucide="upload"></i></div>
+            <h2>Upload Image</h2>
+            <p>Upload an image from your device and get instant detection results.</p>
+            <a class="solid-btn blue" href="{{ url_for('upload_image') }}">Upload Image <i data-lucide="arrow-right"></i></a>
+          </div>
+          <div class="art-wrap">
+            <div class="ring">
+              <div class="file-mock">
+                <img src="{{ url_for('static', filename='images/upload-image.png') }}"
+                     alt="Upload Image">
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="what-we-detect">
+        <div class="section-title" style="margin-top:18px; margin-bottom:10px;">What We Detect</div>
+        <div class="cards-row">
+          <div class="detect-card">
+            <div class="detect-img"><img src="{{ url_for('static', filename='images/cotton.png') }}" alt="Blood Soaked Cotton"></div>
+            <div class="label">Blood Soaked Cotton</div>
+          </div>
+          <div class="detect-card">
+            <div class="detect-img"><img src="{{ url_for('static', filename='images/tablets.png') }}" alt="Expired Tablets"></div>
+            <div class="label">Expired Tablets</div>
+          </div>
+          <div class="detect-card">
+            <div class="detect-img"><img src="{{ url_for('static', filename='images/bottle.png') }}" alt="Expired Liquid Meds"></div>
+            <div class="label">Expired Liquid Meds</div>
+          </div>
+          <div class="detect-card">
+            <div class="detect-img"><img src="{{ url_for('static', filename='images/tools.png') }}" alt="Surgical Tools"></div>
+            <div class="label">Surgical Tools</div>
+          </div>
+          <div class="detect-card">
+            <div class="detect-img"><img src="{{ url_for('static', filename='images/syringe.png') }}" alt="Used Syringes"></div>
+            <div class="label">Used Syringes</div>
+          </div>
+          <div class="detect-card">
+            <div class="detect-img">
+              <div class="more-dots"><span></span><span></span><span></span></div>
+            </div>
+            <div class="label">And More</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    document.querySelectorAll('.nav-item').forEach((item) => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+        item.classList.add('active');
+      });
+    });
+
+    const themeBtn = document.getElementById('themeBtn');
+    themeBtn.addEventListener('click', () => {
+      const dark = document.body.dataset.theme !== 'light';
+      document.body.dataset.theme = dark ? 'light' : 'dark';
+      if (dark) {
+        document.documentElement.style.setProperty('--bg', '#eef4ff');
+        document.documentElement.style.setProperty('--text', '#08111f');
+        document.documentElement.style.setProperty('--muted', 'rgba(8,17,31,0.72)');
+        document.body.style.background = 'linear-gradient(180deg, #eef4ff 0%, #dfeaf9 100%)';
+      } else {
+        document.documentElement.style.setProperty('--bg', '#050816');
+        document.documentElement.style.setProperty('--text', '#eef4ff');
+        document.documentElement.style.setProperty('--muted', 'rgba(232, 240, 255, 0.72)');
+        document.body.style.background = '';
+      }
+    });
+  </script>
+</body>
+</html>

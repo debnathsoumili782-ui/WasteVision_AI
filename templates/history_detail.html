@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Detection Details</title>
+</head>
+<body style="background:#050816;color:white;font-family:Inter,sans-serif;padding:40px;">
+
+<h1>Detection Details</h1>
+
+<hr>
+
+<p><strong>Filename:</strong> {{ row[1] }}</p>
+
+<p><strong>Predicted Class:</strong> {{ row[2] }}</p>
+
+<p><strong>Confidence:</strong> {{ row[3] }}%</p>
+
+<p><strong>Source:</strong> {{ row[4] }}</p>
+
+<p><strong>Created At:</strong> {{ row[5] }}</p>
+
+<br>
+
+<a href="{{ url_for('detection_history') }}"
+   style="
+   padding:12px 20px;
+   background:#33e05d;
+   color:white;
+   text-decoration:none;
+   border-radius:12px;">
+   Back to History
+</a>
+
+</body>
+</html>
